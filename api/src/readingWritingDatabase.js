@@ -4,7 +4,7 @@ class readingWritingDatabase {
 
     #DATA_FILE; //Private element
     constructor(DATA_FILE) {
-        this.DATA_FILE = DATA_FILE;
+        this.#DATA_FILE = DATA_FILE;
     }
 
     /**
@@ -13,11 +13,11 @@ class readingWritingDatabase {
      */
     readTasks() {
         //Data_FILE does not exist
-        if (!fs.existsSync(this.DATA_FILE)){
+        if (!fs.existsSync(this.#DATA_FILE)){
             return [];
         }
         else{
-            return JSON.parse(fs.readFileSync(this.DATA_FILE));
+            return JSON.parse(fs.readFileSync(this.#DATA_FILE));
         }
     }
 
@@ -26,7 +26,7 @@ class readingWritingDatabase {
      * @param {Object} tasks with his different components (title, description, status)
      */
     writeTasks(tasks) {
-        fs.writeFileSync(this.DATA_FILE, JSON.stringify(tasks, null, 2));
+        fs.writeFileSync(this.#DATA_FILE, JSON.stringify(tasks, null, 2));
     }
 
     /**
@@ -34,7 +34,7 @@ class readingWritingDatabase {
      * @returns {any|*[]}
      */
     reset(){
-        fs.writeFileSync(this.DATA_FILE, "[]");
+        fs.writeFileSync(this.#DATA_FILE, "[]");
     }
 }
 

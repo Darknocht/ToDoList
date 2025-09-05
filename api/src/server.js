@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
 
 //Using a security with CORS, to allow only front-end to the port 5173
 app.use(cors({ origin: "http://localhost:5173" }));
@@ -11,14 +10,10 @@ app.use(express.json());
 
 
 //Data file, where the tasks are stocked
-const DATA_FILE = "./tasks.json";
 const readingWritingDatabase = require('./readingWritingDatabase');
-const rwDB = new readingWritingDatabase(DATA_FILE);
-
-//Test, if the server runs without problems
-app.get('/', (req, res) => {
-    res.send('Hello World!\n ' + rwDB.readTasks())
-})
+const rwDB = new readingWritingDatabase(
+    process.env.NODE_ENV === "test" ? "test/tasks.test.json" : "./tasks.json"
+);
 
 //Different commands for a task
 
@@ -67,7 +62,7 @@ app.patch('/tasks/:id', (req, res) => {
     const allTasks = rwDB.readTasks();
 
     //Checking if we find the task in allTasks
-    const task = allTasks.find(task => task.id === id);
+    const task = allTasks.find(task => task.id === Number(id));
     if(!task){
         return res.status(404).json({ error: "Task not found" });
     }
@@ -91,7 +86,7 @@ app.delete('/tasks/:id', (req, res) => {
     const allTasks = rwDB.readTasks();
 
     //We copy the all tasks in newTasks except the deleted task
-    const newTasks = allTasks.filter(t => t.id !== id);
+    const newTasks = allTasks.filter(t => t.id !== Number(id));
 
     //If the length of both are equals, the task wasn't deleted
     if(allTasks.length === newTasks.length){

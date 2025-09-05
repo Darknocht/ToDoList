@@ -2,16 +2,120 @@ const request = require("supertest");
 const app = require("../src/server");
 
 //Data file, where the tasks are stocked
-const DATA_FILE = "./tasks.test.json";
+const DATA_FILE = "test/tasks.test.json"; //   ./src/tasks.json
 const readingWritingDatabase = require('../src/readingWritingDatabase');
 const test = require("node:test");
 const rwDB = new readingWritingDatabase(DATA_FILE);
 
-//Reset the file JSON before the tests
-rwDB.reset();
+//Reset the file JSON before each tests
+beforeEach(() => {
+    rwDB.reset()
+});
 
-test("GET with a void DATA_FILE", async () => {
-    const res = await request(app).get("/tasks.server");
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual([]);
-})
+describe("Tasks API", () => {
+    it("GET should return a void array", async () => {
+        const res = await request(app).get("/tasks");
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([]);
+    });
+
+
+    it("POST should create a task", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "New task", description: "I love to make a task.", status: "todo" });
+        expect(res.statusCode).toBe(201);
+        expect(res.body.title).toBe("New task");
+    });
+
+    it("POST should throw a error with a too long title", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "", description: "I love to make a task.", status: "todo" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid title/);
+    });
+
+    it("POST should throw a error with a no title", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "a".repeat(101) });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid title/);
+    });
+
+    it("POST should throw a error with a too long description", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "Test", description: "a".repeat(501), status: "todo" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
+    });
+
+    it("POST should throw a error with script in description", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "Test", description: "test test <script> test test test", status: "todo" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
+    });
+
+    it("POST should throw a error with SCRIPT in description", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "Test", description: "test test <SCRIPT> test test test", status: "todo" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
+    });
+
+    it("POST should throw a error with ScRiPt in description", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "Test", description: "test test <ScRiPt> test test test", status: "todo" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
+    });
+
+    it("POST should throw a error with unknown status", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "Test", description: "", status: "test" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid status/);
+    });
+
+    it("POST should create a task with status", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "New task", description: "I love to make a task.", status: "in-progress" });
+        expect(res.statusCode).toBe(201);
+        expect(res.body.title).toBe("New task");
+    });
+
+    it("POST should create a task with status done", async () => {
+        const res = await request(app)
+            .post("/tasks")
+            .send({ title: "New task", description: "I love to make a task.", status: "done" });
+        expect(res.statusCode).toBe(201);
+        expect(res.body.title).toBe("New task");
+    });
+
+    it("PATCH should update the statut", async () => {
+        const task = await request(app)
+            .post("/tasks")
+            .send({ title: "Test" });
+        const res = await request(app)
+            .patch(`/tasks/${task.body.id}`)
+            .send({ status: "done" });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.status).toBe("done");
+    });
+
+    it("DELETE should delete a task", async () => {
+        const task = await request(app)
+            .post("/tasks")
+            .send({ title: "Test" });
+        const res = await request(app).delete(`/tasks/${task.body.id}`);
+        expect(res.statusCode).toBe(204);
+    });
+});
