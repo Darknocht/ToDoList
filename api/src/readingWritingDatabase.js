@@ -28,6 +28,14 @@ class readingWritingDatabase {
     writeTasks(tasks) {
         fs.writeFileSync(this.DATA_FILE, JSON.stringify(tasks, null, 2));
     }
+
+    /**
+     * reset the DATA_FILE and initialise with an array
+     * @returns {any|*[]}
+     */
+    reset(){
+        fs.writeFileSync(this.DATA_FILE, "[]");
+    }
 }
 
 module.exports = readingWritingDatabase;
