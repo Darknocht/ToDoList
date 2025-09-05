@@ -1,9 +1,9 @@
 const request = require("supertest");
-const app = require("./server");
+const app = require("../src/server");
 
 //Data file, where the tasks are stocked
 const DATA_FILE = "./tasks.test.json";
-const readingWritingDatabase = require('./src/readingWritingDatabase');
+const readingWritingDatabase = require('../src/readingWritingDatabase');
 const test = require("node:test");
 const rwDB = new readingWritingDatabase(DATA_FILE);
 

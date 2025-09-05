@@ -12,7 +12,7 @@ app.use(express.json());
 
 //Data file, where the tasks are stocked
 const DATA_FILE = "./tasks.json";
-const readingWritingDatabase = require('./src/readingWritingDatabase');
+const readingWritingDatabase = require('./readingWritingDatabase');
 const rwDB = new readingWritingDatabase(DATA_FILE);
 
 //Test, if the server runs without problems
@@ -102,9 +102,5 @@ app.delete('/tasks/:id', (req, res) => {
     rwDB.writeTasks(newTasks);
     res.status(204).send(); //Code 204 (OK, but no additional content)
 });
-
-app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
-})
 
 module.exports = app;
