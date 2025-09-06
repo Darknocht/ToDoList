@@ -19,6 +19,19 @@ describe("Tasks API", () => {
         expect(res.body).toEqual([]);
     });
 
+    it("GET should return an array with data", async () => {
+        const task = await request(app)
+            .post("/tasks")
+            .send({ title: "Test" });
+        const task2 = await request(app)
+            .post("/tasks")
+            .send({ title: "New task", description: "I love to make a task.", status: "todo" });
+        const res = await request(app)
+            .get(`/tasks/`)
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([{id:res.body[0].id, title:"Test", description:"", status:"todo"},
+            {id:res.body[1].id, title: "New task", description: "I love to make a task.", status: "todo" }]);
+    });
 
     it("POST should create a task", async () => {
         const res = await request(app)
@@ -84,7 +97,7 @@ describe("Tasks API", () => {
         expect(res.body.error).toMatch(/Invalid status/);
     });
 
-    it("POST should create a task with status", async () => {
+    it("POST should create a task with status in-progress", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "New task", description: "I love to make a task.", status: "in-progress" });
@@ -100,7 +113,7 @@ describe("Tasks API", () => {
         expect(res.body.title).toBe("New task");
     });
 
-    it("PATCH should update the statut", async () => {
+    it("PATCH should update the statut with done", async () => {
         const task = await request(app)
             .post("/tasks")
             .send({ title: "Test" });
@@ -111,11 +124,58 @@ describe("Tasks API", () => {
         expect(res.body.status).toBe("done");
     });
 
+    it("PATCH should update the statut with in-progress", async () => {
+        const task = await request(app)
+            .post("/tasks")
+            .send({ title: "Test" });
+        const res = await request(app)
+            .patch(`/tasks/${task.body.id}`)
+            .send({ status: "in-progress" });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.status).toBe("in-progress");
+    });
+
+    it("PATCH should update the statut with todo", async () => {
+        const task = await request(app)
+            .post("/tasks")
+            .send({ title: "Test" });
+        const res = await request(app)
+            .patch(`/tasks/${task.body.id}`)
+            .send({ status: "todo" });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.status).toBe("todo");
+    });
+
+    it("PATCH should throw a error with an unknown task", async () => {
+        const res = await request(app)
+            .patch(`/tasks/ab`)
+            .send({ status: "done" });
+        expect(res.statusCode).toBe(404);
+        expect(res.body.error).toMatch(/Task not found/);
+    });
+
+    it("PATCH should throw a error with an unknown status", async () => {
+        const task = await request(app)
+            .post("/tasks")
+            .send({ title: "Test" });
+        const res = await request(app)
+            .patch(`/tasks/${task.body.id}`)
+            .send({ status: "test" });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid status/);
+    });
+
     it("DELETE should delete a task", async () => {
         const task = await request(app)
             .post("/tasks")
             .send({ title: "Test" });
         const res = await request(app).delete(`/tasks/${task.body.id}`);
         expect(res.statusCode).toBe(204);
+    });
+
+    it("DELETE should throw a error with an unknown task", async () => {
+        const res = await request(app).delete(`/tasks/ab`);
+        expect(res.statusCode).toBe(404);
+        expect(res.body.error).toMatch(/Task not found/);
     });
 });

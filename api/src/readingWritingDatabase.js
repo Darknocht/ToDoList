@@ -14,7 +14,7 @@ class readingWritingDatabase {
     readTasks() {
         //Data_FILE does not exist
         if (!fs.existsSync(this.#DATA_FILE)){
-            return [];
+            throw new Error(`File not found: ${this.#DATA_FILE}`);
         }
         else{
             return JSON.parse(fs.readFileSync(this.#DATA_FILE));
