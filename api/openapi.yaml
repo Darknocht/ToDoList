@@ -1,163 +1,180 @@
-openapi: 3.1.0
 info:
   title: To Do List API
   version: 1.0.0
   description: An API for managing a to do List.
+tags:
+  - name: tasks
+    description: Management of every tasks in the json file
 paths:
   /tasks:
     get:
       tags:
-      - tasks
+        - tasks
       summary: Get All tasks from the json file
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-          description: The request was successful, and the server has returned the requested resource in the response body.
-      parameters: []
-      description: |-
+                  $ref: "#/components/schemas/Task"
+                description: Array of every tasks from the json file
+                title: GetAllTasksFromTheJsonFileOk
+          description: Return a array of every task from the json file.
+      description: >-
         Get all tasks.
-        A task has an **id**, a **title**, a **description** (optional) and a **status**.
+
+        A task has an **id**, a **title**, a **description** (optional) and a
+        **status**.
       operationId: getAllTasksFromTheJsonFile
     post:
       tags:
-      - tasks
+        - tasks
       summary: Add a new task in the json file
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: object
-          description: The request was successful, and a new resource was created.
-        '400':
-          $ref: '#/components/responses/BadRequest'
+                $ref: "#/components/schemas/Task"
+          description: A new task is created in the json file.
+        "400":
+          $ref: "#/components/responses/BadRequest"
       parameters: []
-      description: |-
+      description: >-
         The new task must have:
 
+
         - a title, non empty String with max 100 characters
-        - a description is optional but it has max 500 characters and do not contain Javascript Code with HTML tag script
+
+        - a description is optional but it has max 500 characters and do not
+        contain Javascript Code with HTML tag script
+
         - a status between **todo**, **in-progress** and **done**
+
 
         The id is automatically given by the API.
       operationId: addANewTaskInTheJsonFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - status
+              properties:
+                title:
+                  type: string
+                status:
+                  type: string
+                description:
+                  type: string
+        required: true
+        description: A Object with a title, a description and a status.
+  /tasks/{id}:
+    patch:
+      tags:
+        - tasks
+      summary: Update the status of the task from the json file
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+          description: The task with the given id has updated.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      description: >-
+        Update the status of the task with a given id.
+
+        It changes only the status of the task between **todo**, **in-progress**
+        and **done**.
+      operationId: updateTheStatusOfTheTaskFromTheJsonFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Task"
+        required: true
+        description: Request the status
+    delete:
+      tags:
+        - tasks
+      summary: Delete a task from the json file
+      responses:
+        "204":
+          content:
+            application/json:
+              schema:
+                type: "null"
+                title: DeleteATaskFromTheJsonFileNoContent
+          description: The task has been deleted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      description: Delete a task with a given Id from the json file.
+      operationId: deleteATaskFromTheJsonFile
+openapi: 3.1.0
+servers:
+  - url: http://127.0.0.1:3000/
+    description: localhost:3000 for a local server
 components:
   schemas:
-    Book:
+    Task:
       type: object
       required:
-      - id
-      - title
-      - fullText
-      - author
+        - id
+        - title
+        - description
+        - status
       properties:
         id:
           type: integer
           examples:
-          - 12
-          - 14
+            - 12
+            - 14
+          description: The id is given by th API with the Javascript-Code Date.now().
         title:
           type: string
           examples:
-          - Pride and Prejudice
-          - Moby-Dick
-        author:
-          $ref: '#/components/schemas/Author'
-        fullText:
+            - New task
+            - "task #33"
+            - What I do today ?
+          description: Title of the task with no String-empty and max 100 characters.
+        status:
           type: string
           examples:
-          - Lorem ipsum
-    Author:
-      type: object
-      required:
-      - id
-      - name
-      - address
-      - city
-      - numberOfBooksPublished
-      properties:
-        id:
-          type: integer
-          examples:
-          - 1
-          - 2
-          - 3
-        city:
+            - todo
+            - in-progress
+            - done
+          description: "Define the status of the task between: **todo**, **in-progress**
+            and **done**."
+        description:
           type: string
           examples:
-          - New York
-          - Boston
-        name:
-          type: string
-          examples:
-          - J.K. Rowling
-          - Henry Miller
-        address:
-          type: string
-          examples:
-          - Lorem ipsum
-        numberOfBooksPublished:
-          type: string
-          examples:
-          - '1'
-          - '3'
-          - '10'
-      description: Creator of books.
-    BookCreate:
-      type: object
-      required:
-      - fullText
-      - authorId
-      - title
-      properties:
-        title:
-          type: string
-          examples:
-          - Lorem ipsum
-        authorId:
-          type: integer
-          examples:
-          - 1
-          - 2
-          - 3
-        fullText:
-          type: string
-          examples:
-          - Lorem ipsum
-      description: Data transfer object for creating a new Book.
-      x-fiddle-dto-info:
-        baseSchemaName: Book
-    BookSummary:
-      type: object
-      required:
-      - id
-      - author
-      - title
-      properties:
-        id:
-          type: number
-          examples:
-          - 1
-          - 2
-          - 3
-        title:
-          type: string
-          examples:
-          - Lorem ipsum
-        author:
-          $ref: '#/components/schemas/Author'
-      x-fiddle-dto-info:
-        baseSchemaName: Book
+            - Lorem Ipsum
+            - My new Best friends are ...
+          description: The description of a task (optional, max 500 max characters and do
+            not contain Javascript-Code with script)
+      description: >-
+        A task has an id given by the API, and 3 others parameters given by the
+        user:
+
+        - title (max 100 characters and no empty String)
+
+        - description (optional, max 500 max characters and do not contain
+        Javascript-Code with script)
+
+        - status (between **todo**, **in-progress** and **done**
   responses:
     Conflict:
       content:
@@ -165,92 +182,66 @@ components:
           schema:
             type: object
             required:
-            - message
+              - message
             properties:
               message:
                 type: string
                 examples:
-                - Lorem ipsum
-      description: The request could not be completed due to a conflict with the current state of the resource. Resolve the conflict and try again.
+                  - Lorem ipsum
+      description: The request could not be completed due to a conflict with the
+        current state of the resource. Resolve the conflict and try again.
     NotFound:
       content:
         application/json:
           schema:
             type: object
             required:
-            - message
+              - message
             properties:
               message:
                 type: string
                 examples:
-                - Lorem ipsum
-      description: The server cannot find the requested resource. The endpoint may be invalid or the resource may no longer exist.
+                  - Lorem ipsum
+      description: The server cannot find the requested resource. The endpoint may be
+        invalid or the resource may no longer exist.
     BadRequest:
       content:
         application/json:
           schema:
             type: object
             required:
-            - message
+              - message
             properties:
               message:
                 type: string
                 examples:
-                - Lorem ipsum
-      description: The server could not understand the request due to invalid syntax. The client should modify the request and try again.
+                  - Lorem ipsum
+      description: The server could not understand the request due to invalid syntax.
+        The client should modify the request and try again.
     InternalServerErrror:
       content:
         application/json:
           schema:
             type: object
             required:
-            - message
+              - message
             properties:
               message:
                 type: string
                 examples:
-                - Lorem ipsum
-      description: The server encountered an unexpected condition that prevented it from fulfilling the request. Report the issue to the support team if it persists.
+                  - Lorem ipsum
+      description: The server encountered an unexpected condition that prevented it
+        from fulfilling the request. Report the issue to the support team if it
+        persists.
   parameters:
-    title:
-      in: query
-      name: title
-      style: form
-      schema:
-        type: string
-        examples:
-        - Pride and Prejudice
-        - Moby-Dick
-      explode: false
-      required: false
-      description: Filter the list of books according to the title.
-    book_id:
+    id:
+      name: id
       in: path
-      name: book_id
-      style: simple
+      description: Path parameter to retrieve tasks by.
       schema:
-        type: integer
-        examples:
-        - 1
-        - 2
-        - 3
+        type: number
       explode: false
-      description: Path parameter to retrieve books by.
+      style: simple
       allowReserved: false
       allowEmptyValue: true
-    author_id:
-      in: query
-      name: author_id
-      style: form
-      schema:
-        type: integer
-        examples:
-        - 1
-        - 2
-        - 23
-      explode: false
-      description: Filter the list of books accodring to the `author_id`.
-      allowReserved: false
-      allowEmptyValue: false
-tags:
-- name: tasks
+  securitySchemes: {}
