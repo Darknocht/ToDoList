@@ -9,22 +9,27 @@ interface Props {
 }
 
 export default function TaskList({reload}: Props){
+    //We initiate task with useState
     const [tasks, setTasks] = useState<Task[]>([]);
 
+    //React component to update tasks
     useEffect(() => {
         getTasks().then(setTasks);
     }, [reload]);
 
+    //Delete task Button
     const handleDelete = async (id: number) => {
         await deleteTask(id);
         setTasks(tasks.filter((task) => task.id !== id));
     };
 
+    //Update status of the task Button
     const handleStatusChange = async (id: number, status: Task["status"]) => {
         const updatedTask = await updateTaskStatus(id, status);
         setTasks(tasks.map(task => (task.id === id ? updatedTask : task)));
     };
 
+    //Representation of a task in a web-application
     return (
         <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {tasks.map((task) => (
