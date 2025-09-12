@@ -44,9 +44,11 @@ export default function TaskList({reload}: Props){
                                       >
                                           {task.title}
                                       </Typography>
-                                      {task.description}
+                                      <Typography>
+                                          {task.description}
+                                      </Typography>
                                       <ListItemButton onClick={() => handleDelete(task.id)}>
-                                            DELETE
+                                            Löschen
                                       </ListItemButton>
                                       <select
                                           value={task.status}

@@ -15,7 +15,7 @@ const readingWritingDatabase = require('./readingWritingDatabase');
 //We want just 2 files for our Programm, tasks.json for the App and tasks.test.json for tests
 /* istanbul ignore next */
 const rwDB = new readingWritingDatabase(
-    process.env.NODE_ENV === "test" ? "test/tasks.test.json" : "./tasks.json"
+    process.env.NODE_ENV === "test" ? "test/tasks.test.json" : "src/tasks.json"
 );
 
 //Different commands for a task
