@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {TextField, Button, MenuItem, Paper} from "@mui/material";
 import {createTask} from "../api.ts";
 import type {Task} from "../Task.ts";
@@ -29,7 +29,7 @@ export default function TaskForm({onTaskCreated}: Props){
         e.preventDefault();
         const err = checking();
         //An error has been found
-        if(!err){
+        if(err){
             setError(err);
             return;
         }
@@ -51,8 +51,8 @@ export default function TaskForm({onTaskCreated}: Props){
                     label="Titel"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    error={!!error}
-                    helperText={error}
+                    error={Boolean(!!error && error === "Erforderlicher Titel (max 100 Zeichen)")}
+                    helperText={error === "Erforderlicher Titel (max 100 Zeichen)" ? error : ""}
                 />
                 <TextField
                     fullWidth={true}
@@ -62,6 +62,8 @@ export default function TaskForm({onTaskCreated}: Props){
                     multiline={true}
                     rows={3}
                     sx={{mt:2}}
+                    error={Boolean(!!error && error === "Ungültige Beschreibung")}
+                    helperText={error === "Ungültige Beschreibung" ? error : ""}
                 />
                 <TextField
                     select={true}
@@ -73,7 +75,7 @@ export default function TaskForm({onTaskCreated}: Props){
                     <MenuItem value="in-progress">Laufend</MenuItem>
                     <MenuItem value="done">Fertig</MenuItem>
                 </TextField>
-                <Button type="submit" variant="contained" color="success" onClick={handleSubmit}>
+                <Button type="submit" variant="contained" color="success">
                     erstellen
                 </Button>
             </form>

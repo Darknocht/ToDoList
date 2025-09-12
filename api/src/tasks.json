@@ -16,5 +16,11 @@
     "title": "New task",
     "description": "I love to make a task.",
     "status": "todo"
+  },
+  {
+    "id": 1757685413182,
+    "title": "Web-Applikation",
+    "description": "Ich schreibe einen Text mit React.",
+    "status": "todo"
   }
 ]
