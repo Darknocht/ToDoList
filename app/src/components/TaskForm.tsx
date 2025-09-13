@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {TextField, Button, MenuItem, Paper} from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {createTask} from "../api.ts";
 import type {Task} from "../Task.ts";
 
@@ -67,6 +68,7 @@ export default function TaskForm({onTaskCreated}: Props){
                 />
                 <TextField
                     select={true}
+                    multiline={true}
                     label="Status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value as Task["status"])}
@@ -75,7 +77,12 @@ export default function TaskForm({onTaskCreated}: Props){
                     <MenuItem value="in-progress">Laufend</MenuItem>
                     <MenuItem value="done">Fertig</MenuItem>
                 </TextField>
-                <Button type="submit" variant="contained" color="success">
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="success"
+                    startIcon={<AddCircleOutlineIcon/>}
+                    >
                     erstellen
                 </Button>
             </form>
