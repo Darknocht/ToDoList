@@ -13,17 +13,6 @@ export default function TaskList({reload}: Props){
     //We initiate task with useState
     const [tasks, setTasks] = useState<Task[]>([]);
 
-    //Style to separate each tasks
-    const style = {
-        p: 0,
-        width: '100%',
-        maxWidth: 360,
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        backgroundColor: 'background.paper',
-    };
-
     //React component to update tasks
     useEffect(() => {
         getTasks().then(setTasks);
@@ -41,27 +30,59 @@ export default function TaskList({reload}: Props){
         setTasks(tasks.map(task => (task.id === id ? updatedTask : task)));
     };
 
+    const colorTask = (status: string) => {
+        if(status === "todo"){
+            return 'error.light';
+        }
+        else if(status === "in-progress"){
+            return 'warning.light';
+        }
+        else{
+            return 'success.light';
+        }
+    };
+
     //Representation of a task in a web-application
     return (
-        <List sx={{ width: '100%', maxWidth: 360,  style}}>
+        <List sx={{
+            width: '100%',
+            maxWidth: 360,
+            mt: 0,
+            mb: 0,
+            ml: 'auto',
+            mr: 'auto'}}>
             {tasks.map((task) => (
                 <ListItem alignItems="flex-start">
 
                     <ListItemText
-                        style={{backgroundColor: "powderblue", borderRadius: 10}}
+                        style={{
+                            backgroundColor: "white",
+                            borderRadius: 10}}
                               secondary={
                                   <React.Fragment>
-                                      <Box sx={{ borderRadius: '50%' }}/>
+                                      <Box sx={{
+                                          width: 20,
+                                          height: 20,
+                                          borderRadius: 1,
+                                          display: "inline-flex",
+                                          ml: 1,
+                                          mr: 1,
+                                          mt: 1,
+                                          bgcolor: colorTask(task.status)
+                                      }}/>
                                       <Typography
                                           component="span"
                                           variant="h5"
-                                          sx={{ color: 'text.primary', display: 'inline' }}
+                                          sx={{ color: 'text.primary',
+                                              display: 'inline'}}
                                       >
                                           {task.title}
                                       </Typography>
                                       <Typography
                                           variant="body1"
-                                          sx={{color: 'text.primary'}}
+                                          sx={{
+                                              color: 'text.primary',
+                                              ml:4.75}}
                                       >
                                           {task.description}
                                       </Typography>
@@ -71,19 +92,24 @@ export default function TaskList({reload}: Props){
                                           label="Status"
                                           value={task.status}
                                           onChange={(e) => handleStatusChange(task.id, e.target.value as Task["status"])}
-                                          sx={{mt:2, ml:2, mb:2}}
+                                          sx={{
+                                              mt:2,
+                                              ml:2,
+                                              mb:1}}
                                       >
                                           <MenuItem value="todo">Zu tun</MenuItem>
                                           <MenuItem value="in-progress">Laufend</MenuItem>
                                           <MenuItem value="done">Fertig</MenuItem>
                                       </TextField>
                                       <Button
-
                                           onClick={() => handleDelete(task.id)}
                                           color="error"
                                           variant="contained"
                                           startIcon={<DeleteIcon />}
-                                          sx={{mt:2, float:"right", mr:2}}>
+                                          sx={{
+                                              mt:2,
+                                              float:"right",
+                                              mr:2}}>
                                           Löschen
                                       </Button>
                                       <Divider component="li" />

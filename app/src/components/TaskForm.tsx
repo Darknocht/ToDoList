@@ -67,11 +67,16 @@ export default function TaskForm({onTaskCreated}: Props){
                     helperText={error === "Ungültige Beschreibung" ? error : ""}
                 />
                 <TextField
+                    size="small"
                     select={true}
                     multiline={true}
                     label="Status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value as Task["status"])}
+                    sx={{
+                        mt: 2,
+                        mr: 2
+                }}
                     >
                     <MenuItem value="todo">Zu tun</MenuItem>
                     <MenuItem value="in-progress">Laufend</MenuItem>
@@ -82,6 +87,10 @@ export default function TaskForm({onTaskCreated}: Props){
                     variant="contained"
                     color="success"
                     startIcon={<AddCircleOutlineIcon/>}
+                    sx={{
+                        mt: 2,
+                        ml: 2,
+                        }}
                     >
                     erstellen
                 </Button>
