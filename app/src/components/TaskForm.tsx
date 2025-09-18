@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {TextField, Button, MenuItem, Paper} from "@mui/material";
+import {TextField, Button, MenuItem, Paper, Dialog, DialogTitle, DialogContent, Box, Typography} from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CloseIcon from '@mui/icons-material/Close';
 import {createTask} from "../api.ts";
 import type {Task} from "../Task.ts";
 
@@ -10,27 +11,30 @@ interface Props {
 
 export default function TaskForm({onTaskCreated}: Props){
     //Initialisation of each State of a task with error
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [title, setTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
     const [status, setStatus] = useState<Task["status"]>("todo");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string[]>(["",""]);
 
-    const checking = (): string => {
+    //Initialisation of a pop-up TaskForm
+    const [open, setOpen] = useState<boolean>(false);
+
+    const checking = (): string[] => {
+        let errors: string[] = ["", ""];
         if(!title || title.length > 100){
-            return "Erforderlicher Titel (max 100 Zeichen)";
+            errors[0] = "Erforderlicher Titel mit max 100 Zeichen";
         }
         if(description.length > 500 || /<script>/i.test(description)){
-            return "Ungültige Beschreibung"
+            errors[1] = "Beschreibung mit max 500 Zeichen und kein JS-Code"
         }
-        //No error
-        return "";
+        return errors;
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const err = checking();
         //An error has been found
-        if(err){
+        if(err[0].length > 0 || err[1].length > 0){
             setError(err);
             return;
         }
@@ -39,62 +43,94 @@ export default function TaskForm({onTaskCreated}: Props){
         setTitle("");
         setDescription("");
         setStatus("todo");
-        setError("");
+        setError(["",""]);
         onTaskCreated();
+        setOpen(false);
     };
 
     //Representation of a TaskForm to create a new task
     return (
-        <Paper sx={{p:2, mb:2}}>
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    fullWidth={true}
-                    label="Titel"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    error={Boolean(!!error && error === "Erforderlicher Titel (max 100 Zeichen)")}
-                    helperText={error === "Erforderlicher Titel (max 100 Zeichen)" ? error : ""}
-                />
-                <TextField
-                    fullWidth={true}
-                    label="Beschreibung"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    multiline={true}
-                    rows={3}
-                    sx={{mt:2}}
-                    error={Boolean(!!error && error === "Ungültige Beschreibung")}
-                    helperText={error === "Ungültige Beschreibung" ? error : ""}
-                />
-                <TextField
-                    size="small"
-                    select={true}
-                    multiline={true}
-                    label="Status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as Task["status"])}
-                    sx={{
-                        mt: 2,
-                        mr: 2
-                }}
-                    >
-                    <MenuItem value="todo">Zu tun</MenuItem>
-                    <MenuItem value="in-progress">Laufend</MenuItem>
-                    <MenuItem value="done">Fertig</MenuItem>
-                </TextField>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="success"
-                    startIcon={<AddCircleOutlineIcon/>}
-                    sx={{
-                        mt: 2,
-                        ml: 2,
-                        }}
-                    >
-                    erstellen
-                </Button>
-            </form>
+        <Paper sx={{p:2, mb:2, borderRadius: 2}}>
+            <Typography variant="h3" color="black" sx={{mb: 2}}>To-Do List</Typography>
+            <Button
+                variant="contained"
+                color="success"
+                onClick={() => setOpen(true)}
+                startIcon={<AddCircleOutlineIcon/>}
+            >
+                eine Aufgabe erstellen
+            </Button>
+            <Dialog
+                open={open}
+                onClose={() => {setOpen(false)}}
+            >
+                <DialogTitle>
+                    Eine Aufgabe erstellen
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => setOpen(false)}
+                        startIcon={<CloseIcon/>}
+                        sx={{float: "right"}}>
+                        Schließen
+                    </Button>
+                </DialogTitle>
+                <DialogContent>
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            fullWidth={true}
+                            label="Titel"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            error={Boolean(!!error && error[0].length > 0)}
+                            helperText={error[0]}
+                        />
+                        <TextField
+                            fullWidth={true}
+                            label="Beschreibung"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            multiline={true}
+                            rows={3}
+                            sx={{mt:2}}
+                            error={Boolean(!!error && error[1].length > 0)}
+                            helperText={error[1]}
+                        />
+                        <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                            <TextField
+                                size="small"
+                                select={true}
+                                multiline={true}
+                                label="Status"
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value as Task["status"])}
+                                sx={{
+                                    mt: 2,
+                                    ml: 2
+                                }}
+                            >
+                                <MenuItem value="todo">Zu tun</MenuItem>
+                                <MenuItem value="in-progress">Laufend</MenuItem>
+                                <MenuItem value="done">Fertig</MenuItem>
+                            </TextField>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                startIcon={<AddCircleOutlineIcon/>}
+                                sx={{
+                                    mt: 2,
+                                    ml: 2
+                                }}
+                            >
+                                erstellen
+                            </Button>
+                        </Box>
+
+                    </form>
+                </DialogContent>
+            </Dialog>
+
         </Paper>
     );
 }
