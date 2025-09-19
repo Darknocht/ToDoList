@@ -84,6 +84,7 @@ export default function TaskForm({onTaskCreated}: Props){
                             onChange={(e) => setTitle(e.target.value)}
                             error={Boolean(!!error && error[0].length > 0)}
                             helperText={error[0]}
+                            sx={{mt: 2}}
                         />
                         <TextField
                             fullWidth={true}

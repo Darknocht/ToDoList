@@ -61,28 +61,41 @@ export default function TaskList({reload}: Props){
                               secondary={
                                   <React.Fragment>
                                       <Box sx={{
-                                          width: 20,
-                                          height: 20,
-                                          borderRadius: 1,
-                                          display: "inline-flex",
-                                          ml: 1,
-                                          mr: 1,
-                                          mt: 1,
-                                          bgcolor: colorTask(task.status)
-                                      }}/>
-                                      <Typography
-                                          component="span"
-                                          variant="h5"
-                                          sx={{ color: 'text.primary',
-                                              display: 'inline'}}
-                                      >
-                                          {task.title}
-                                      </Typography>
+                                          display: 'flex',
+                                          alignItems: 'flex-start',
+                                      }}>
+                                          <Box sx={{
+                                              width: 20,
+                                              height: 20,
+                                              borderRadius: 1,
+                                              display: "inline-block",
+                                              ml: 1,
+                                              mr: 1,
+                                              mt: 1,
+                                              flexShrink: 0,
+                                              bgcolor: colorTask(task.status)
+                                          }}/>
+                                          <Typography
+                                              component="span"
+                                              variant="h5"
+                                              sx={{ color: 'text.primary',
+                                                  mr: 4.75,
+                                                  display: 'inline',
+                                                  wordBreak: "break-word",
+                                                  maxWidth: "100%",
+                                                  textAlign: 'left'}}
+                                          >
+                                              {task.title}
+                                          </Typography>
+                                      </Box>
                                       <Typography
                                           variant="body1"
                                           sx={{
                                               color: 'text.primary',
-                                              ml:4.75}}
+                                              ml:4.75,
+                                              mr: 4.75,
+                                              wordBreak: "break-word",
+                                              maxWidth: "100%"}}
                                       >
                                           {task.description}
                                       </Typography>
