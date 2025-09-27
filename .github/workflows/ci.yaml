@@ -11,26 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./api
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: cd api && npm start
-      - run: cd api && npm test
+      - run: npm start
+      - run: npm test
 
   frontend-build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./frontend
+        working-directory: ./app
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: cd app && npm install
-      - run: cd app && npm run build
+      - run: npm install
+      - run: npm run build
