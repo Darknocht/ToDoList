@@ -4,12 +4,20 @@ const cors = require("cors");
 const app = express();
 
 //Using a security with CORS, to allow only front-end to the port 5173
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://todolist-181m.onrender.com", //Render server (Back-End)
+    "https://to-do-list-rho-snowy-75.vercel.app" //Vercel server (Front-End)
+];
+
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://todolist-181m.onrender.com", //Render server (Back-End)
-        "https://to-do-list-rho-snowy-75.vercel.app" //Vercel server (Front-End)
-    ],
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: ["GET", "POST", "PATCH", "DELETE"],
 }));
 
