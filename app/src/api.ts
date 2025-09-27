@@ -1,9 +1,11 @@
 import axios from "axios";
 import type {Task} from "./Task";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 const api = axios.create({
-    baseURL: "http://localhost:3000",
-    //Our api is located on port 3000
+    baseURL: API_URL,
+    //Our api is located on port 3000 or the Vercel Server
 })
 
 //GET api/tasks
