@@ -6,7 +6,8 @@ const app = express();
 //Using a security with CORS, to allow only front-end to the port 5173
 app.use(cors({
     origin: [
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "https://todolist-181m.onrender.com/" //Render server
     ],
     methods: ["GET", "POST", "PATCH", "DELETE"],
 }));
