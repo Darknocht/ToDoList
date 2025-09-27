@@ -68,10 +68,29 @@ paths:
               properties:
                 title:
                   type: string
+                  description: |-
+                    Title of the task.
+                    This is required and max 100 characters.
+                  examples:
+                    - My new Task
+                    - My task
+                    - "Task #12"
                 status:
                   type: string
+                  description: Status of the task between **todo**, **in-progress** and **done**.
+                  examples:
+                    - todo
+                    - in-progress
+                    - done
                 description:
                   type: string
+                  description: |-
+                    Description of the task.
+                    This is optional and max 500 characters.
+                    The description mustn't have Javascript code.
+                  examples:
+                    - Lorem Ipsum
+                    - This is my new task.
         required: true
         description: A Object with a title, a description and a status.
   /tasks/{id}:
@@ -125,7 +144,7 @@ paths:
       operationId: deleteATaskFromTheJsonFile
 openapi: 3.1.0
 servers:
-  - url: http://127.0.0.1:3000/
+  - url: http://localhost:3000
     description: localhost:3000 for a local server
 components:
   schemas:

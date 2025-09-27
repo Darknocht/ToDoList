@@ -4,13 +4,32 @@ const cors = require("cors");
 const app = express();
 
 //Using a security with CORS, to allow only front-end to the port 5173
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({
+    origin: [
+        "http://localhost:5173"
+    ],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+}));
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'");
+    next();
+});
 
 app.use(express.json());
 
 
 //Data file, where the tasks are stocked
 const readingWritingDatabase = require('./readingWritingDatabase');
+
+const fs = require("fs");
+const yaml = require("yaml");
+const swaggerUi = require("swagger-ui-express");
+
+const file = fs.readFileSync("./src/swagger.yaml", "utf8");
+const swaggerDocument = yaml.parse(file);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //We want just 2 files for our Programm, tasks.json for the App and tasks.test.json for tests
 /* istanbul ignore next */
