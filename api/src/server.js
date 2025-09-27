@@ -7,8 +7,8 @@ const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://todolist-181m.onrender.com/", //Render server (Back-End)
-        "https://to-do-list-rho-snowy-75.vercel.app/" //Vercel server (Front-End)
+        "https://todolist-181m.onrender.com", //Render server (Back-End)
+        "https://to-do-list-rho-snowy-75.vercel.app" //Vercel server (Front-End)
     ],
     methods: ["GET", "POST", "PATCH", "DELETE"],
 }));
