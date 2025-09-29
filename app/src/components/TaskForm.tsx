@@ -19,6 +19,10 @@ export default function TaskForm({onTaskCreated}: Props){
     //Initialisation of a pop-up TaskForm
     const [open, setOpen] = useState<boolean>(false);
 
+    /**
+     * Checking if title and description don't meet the criteria
+     * @return {string[]} an Array of description errors (empty if there are no error)
+     */
     const checking = (): string[] => {
         let errors: string[] = ["", ""];
         if(!title || title.length > 100){
@@ -30,6 +34,10 @@ export default function TaskForm({onTaskCreated}: Props){
         return errors;
     }
 
+    /**
+     * Create the task when the creating Button is clicked and close the window
+     * @param e event when the creating Button is clicked
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const err = checking();
@@ -38,13 +46,15 @@ export default function TaskForm({onTaskCreated}: Props){
             setError(err);
             return;
         }
-        //Initialisation of a void task
+        //Initialisation of the task
         await createTask({title, description, status});
         setTitle("");
         setDescription("");
         setStatus("todo");
         setError(["",""]);
         onTaskCreated();
+
+        //We close the window, the task has been created
         setOpen(false);
     };
 

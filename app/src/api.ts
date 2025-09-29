@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const api = axios.create({
     baseURL: API_URL,
-    //Our api is located on port 3000 or the Vercel Server
+    //Our api is located on port 3000 or the Render Server
 })
 
 //GET api/tasks

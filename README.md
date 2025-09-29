@@ -3,13 +3,13 @@
 ## Back-End
 
 ### Struktur
-Die API verwendet Node.js und Express.js also API REST.
+Die API verwendet Node.js und Express.js als REST-API.
 Das Back-End liegt im Verzeichnis `./api/`.
 
-- `./src/server.js` hat die verschiedenen Wege der API (GET, POST, PATCH und DELETE).
-- `./src/index.js` hört den Server mit app.listen() zu.
-- `./src/readingWritingDatabase.js` ist die Verwaltung der JSON-Dateien.
-- `./src/swagger.yaml` ist die API-Dokumentation ([Link der API-Dokumentation](#Back-End-Deployment)).
+- `./src/server.js` enthält die verschiedenen Routen der API (GET, POST, PATCH und DELETE).
+- `./src/index.js` startet den Server mit `app.listen()`.
+- `./src/readingWritingDatabase.js` verwaltet die JSON-Dateien.
+- `./src/swagger.yaml` erhält die API-Dokumentation ([siehe API-Dokumentation](#Back-End-Deployment)).
 
 ### Installation
 Um die Pakete zu installieren oder zu aktualisieren: `npm install`.
@@ -21,35 +21,35 @@ cd api
 npm start
 ```
 
-Die API liegt auf `localhost:3000`.  
-Ausnahme für den Render-Server, gibt es einen einzigartigen Link ([Back-End Deployment sehen](#Back-End-Deployment)).
+Die API läuft auf `localhost:3000`.  
+>Ausnahme: Beim Render-Server gibt es einen eigenen Link ([siehe Back-End Deployment](#Back-End-Deployment)).
 
 ### Funktionen
-Die Verwaltung der Aufgaben liegt in `/tasks`.
+Die Verwaltung der Aufgaben erfolgt über `/tasks`.
 
 #### Aufgabe
 Eine Aufgabe (task) ist ein Objekt mit:
 
-- Ein verpflichteter Titel (title) mit maximum 100 Zeichen.
-- Eine optionale Beschreibung (description) mit maximum 500 Zeichen und erhält keinen JavaScript-Code.
-- Ein Status zwischen `Zu tun` (todo), `Laufend` (in-progress) und `Fertig` (done).
+- Einem verpflichteten Titel (title) mit maximal 100 Zeichen.
+- Einer optionalen Beschreibung (description) mit maximal 500 Zeichen, ohne JavaScript-Code.
+- Einem Status zwischen `Zu tun` (todo), `Laufend` (in-progress) und `Fertig` (done).
 
 #### Funktionalität
 - `GET /tasks`, gibt die Liste der Aufgaben zurück
 - `POST /tasks`, erstellt eine neue Aufgabe
-- `PATCH /tasks:id`, aktualisiert der Status der Aufgabe mit der id
+- `PATCH /tasks:id`, aktualisiert den Status der Aufgabe mit der id
 - `DELETE /tasks:id`, löscht eine Aufgabe mit der id
 
 ### Datenbank (JSON)
-Ich habe das Format JSON um die Aufgaben zu behalten gewählt, weil dieses Format einfacher ist.  
-Für ein kleines Projekt mit einer einzigen Tabelle und 4 Datentypen (ID, Titel, Beschreibung und Status) ist JSON genug.
+Ich habe JSON als Speicherformat für die Aufgaben gewählt, weil es einfacher zu handhaben ist.
+Für ein kleines Projekt mit nur einer Tabelle und vier Datentypen (ID, Titel, Beschreibung, Status) reicht JSON völlig aus.
 
-SQL ist möglich aber ich sollte einen SQL-Server für die Datenbank haben und eine JS-Bibliothek um die Dateien zu lesen verwenden.
+SQL wäre ebenfalls möglich, aber dafür müsste ein SQL-Server installiert werden und eine passende JS-Bibliothek zum Lesen/Schreiben der Daten genutzt werden
 
 Es gibt zwei Dateien zum Speichern der Aufgaben:
 
-- `tasks.json` liegt in `./api/src/` um die Aufgaben der Web-Applikation zu verwalten
-- `tasks.test.json` liegt in `./api/test/` um die Dateien server.js und readingWritingDatabase in `./api/src/` zu testen
+- `tasks.json` in `./api/src/` verwaltet die Aufgaben der Web-Applikation
+- `tasks.test.json` in `./api/test/` dient zum Testen der Dateien `server.js` und `readingWritingDatabase.js` in `./api/src/` zu testen
 
 ### Test
 Um die Tests auszuführen: 
@@ -60,32 +60,32 @@ npm run test
 
 Das Coverage Report liegt im Verzeichnis `./coverage/`.
 
-Für die Tests liegen sie im Verzeichnis `./api/test`:
+Die Tests befinden sich im Verzeichnis `./api/test`:
 
-- `./test/readingWritingDatabase.test.js` testet die verschiedenen Funktionen um eine JSON-Datei zu lesen oder zu schreiben.
-- `./test/server.test.js` testet die verschiedenen Wege der API (GET, POST, PATCH und DELETE).
+- `./test/readingWritingDatabase.test.js` testet die verschiedenen Funktionen zum Lesen und Schreiben von JSON-Dateien
+- `./test/server.test.js` testet die verschiedenen API-Routen (GET, POST, PATCH und DELETE)
 
 ### Back-End-Deployment
-Ich verwende Render für das Deployment des Back-Ends.
+Für das Deployment des Back-Ends verwende ich Render.
 
 - Das Link: https://todolist-181m.onrender.com](https://todolist-181m.onrender.com).
 - Das Link um die Aufgaben lesen: [https://todolist-181m.onrender.com/tasks](https://todolist-181m.onrender.com/tasks).
 - Das Link der API-Dokumentation mit Swagger: [https://todolist-181m.onrender.com/api-docs](https://todolist-181m.onrender.com/api-docs).
 
-GitHub Actions überprüft, wenn es ein Problem mit dem Back-End-Deployment gibt.
+GitHub Actions (Workflows) überprüft automatisch, ob es Probleme mit dem Back-End-Deployment gibt ([siehe Workflows](#Workflows)).
 
 ---
 
 ## Front-End
 
 ### Struktur
-Die Applikation verwendet das Framework React mit Typescript und die Grafikbibliothek Material UI.  
+Die Applikation verwendet das Framework React mit TypeScript und die UI-Bibliothek Material UI.
 Das Front-End liegt im Verzeichnis `./app/`:
 
-- `./src/api.ts` erhält alle Daten der API im Back-End.
-- `./src/App.tsx` stellt die Web-Applikation dar.
-- `./src/components/taskList.tsx` stellt die Liste der verschiedenen Aufgaben dar, die im Verzeichnis `./api/src/tasks.json`.
-- `./src/components/taskForm.tsx` stellt das Formular um eine Aufgabe zu erstellen dar.
+- `./src/api.ts` holt alle Daten aus dem Back-End
+- `./src/App.tsx` stellt die Web-Applikation dar
+- `./src/components/taskList.tsx` zeigt die Liste der verschiedenen Aufgaben (Daten aus `./api/src/tasks.json`)
+- `./src/components/taskForm.tsx` stellt das Formular zur Erstellung einer Aufgabe dar
 
 ### Installation
 Um die Pakete zu installieren oder zu aktualisieren: 
@@ -100,8 +100,8 @@ Im Entwicklermodus starten:
 cd app
 npm run dev
 ```
-Die Web-Applikation liegt auf `localhost:5173`.
-Ausnahme für den Render-Server, gibt es einen einzigartigen Link ([Front-End Deployment sehen](#Front-End-Deployment)).
+Die Web-Applikation läuft auf `localhost:5173`.
+> Ausnahme: Beim Render-Server gibt es einen eigenen Link ([siehe Front-End Deployment](#Front-End-Deployment)).
 
 > ACHTUNG: Der Back-End Server muss auf `localhost:3000` starten. Andernfalls können keine Aufgaben geladen oder gespeichert werden. 
 
@@ -113,20 +113,20 @@ npm run build
 ```
 
 ### Front-End-Deployment
-Ich verwende Vercel für das Deployment des Front-Ends.
+Für das Deployment des Front-Ends verwende ich Vercel.
 
-- Das Link um die Applikation sehen: [https://to-do-list-rho-snowy-75.vercel.app/](https://to-do-list-rho-snowy-75.vercel.app/)
+- Link zur Applikation: [https://to-do-list-rho-snowy-75.vercel.app/](https://to-do-list-rho-snowy-75.vercel.app/)
 
-GitHub Actions überprüft, wenn es ein Problem mit dem Back-End-Deployment gibt.  
+GitHub Actions (Workflows) überprüft automatisch, ob es Probleme mit dem Front-End-Deployment gibt ([siehe Workflows](#Workflows)).  
 
 ## Workflows
 
-Die Workflows ermöglichen überprüfen, wenn das Programm automatisch funktioniert.
-Alle workflows liegt in der `./.github/workflows/ci.yaml/`.
+Die Workflows überprüfen automatisch, ob das Programm korrekt funktioniert.
+Alle workflows befinden sich in `./.github/workflows/ci.yaml/`.
 
 Es gibt 3 Workflows:
 - Back-End Deployment Workflow 
 - Front-End Deployment Workflow
-- Vercel Workflow (Verwaltung mit der Vercel-Website)
+- Vercel Workflow (über die Vercel-Webseite verwaltet)
 
-Es gibt auch ein Workflow mit Render, aber Github zeigt es nicht an.
+Es gibt auch einen Workflow mit Render, aber GitHub zeigt ihn nicht an.

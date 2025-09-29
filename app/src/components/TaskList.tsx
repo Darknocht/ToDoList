@@ -18,18 +18,29 @@ export default function TaskList({reload}: Props){
         getTasks().then(setTasks);
     }, [reload]);
 
-    //Delete task Button
+    /**
+     * Delete a task with a delete Button
+     * @param {Number} id of the task
+     */
     const handleDelete = async (id: number) => {
         await deleteTask(id);
         setTasks(tasks.filter((task) => task.id !== id));
     };
 
-    //Update status of the task Button
+    /**
+     * Update the status of the task with the select button
+     * @param {Number} id of the task
+     * @param {Task["status"]} status of the task to update
+     */
     const handleStatusChange = async (id: number, status: Task["status"]) => {
         const updatedTask = await updateTaskStatus(id, status);
         setTasks(tasks.map(task => (task.id === id ? updatedTask : task)));
     };
 
+    /**
+     * Update the colour paste of the task
+     * @param {string} status of the task
+     */
     const colorTask = (status: string) => {
         if(status === "todo"){
             return 'error.light';
@@ -53,7 +64,6 @@ export default function TaskList({reload}: Props){
             mr: 'auto'}}>
             {tasks.map((task) => (
                 <ListItem alignItems="flex-start">
-
                     <ListItemText
                         style={{
                             backgroundColor: "white",
