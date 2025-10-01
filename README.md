@@ -6,10 +6,11 @@
 Die API verwendet Node.js und Express.js als REST-API.
 Das Back-End liegt im Verzeichnis `./api/`.
 
-- `./src/server.js` enthält die verschiedenen Routen der API (GET, POST, PATCH und DELETE).
-- `./src/index.js` startet den Server mit `app.listen()`.
-- `./src/readingWritingDatabase.js` verwaltet die JSON-Dateien.
-- `./src/swagger.yaml` erhält die API-Dokumentation ([siehe API-Dokumentation](#Back-End-Deployment)).
+- `./src/server.js` enthält die verschiedenen Routen der API (GET, POST, PATCH und DELETE)
+- `./src/index.js` startet den Server mit `app.listen()`
+- `./src/readingWritingDatabase.js` verwaltet die JSON-Dateien
+- `./src/swagger.yaml` erhält die API-Dokumentation ([siehe API-Dokumentation](#Back-End-Deployment))
+- `./node_modules` erhält alle notwendigen Modulen
 
 ### Installation
 Um die Pakete zu installieren oder zu aktualisieren: `npm install`.
@@ -86,6 +87,8 @@ Das Front-End liegt im Verzeichnis `./app/`:
 - `./src/App.tsx` stellt die Web-Applikation dar
 - `./src/components/taskList.tsx` zeigt die Liste der verschiedenen Aufgaben (Daten aus `./api/src/tasks.json`)
 - `./src/components/taskForm.tsx` stellt das Formular zur Erstellung einer Aufgabe dar
+- `./node_modules` erhält alle notwendigen Modulen
+- `./public` erhält die Logos der Web-Applikation
 
 ### Installation
 Um die Pakete zu installieren oder zu aktualisieren: 
