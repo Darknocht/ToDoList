@@ -106,7 +106,7 @@ npm run dev
 Die Web-Applikation läuft auf `localhost:5173`.
 > Ausnahme: Beim Render-Server gibt es einen eigenen Link ([siehe Front-End Deployment](#Front-End-Deployment)).
 
-> ACHTUNG: Der Back-End Server muss auf `localhost:3000` starten. Andernfalls können keine Aufgaben geladen oder gespeichert werden. 
+> ACHTUNG: Der Back-End Server muss auf `localhost:3000` starten. Andernfalls startet es den Render-Server automatisch. [siehe Render-Server](#Back-End-Deployment). 
 
 ### Build
 Um einen Build zu erstellen: 

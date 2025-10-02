@@ -128,6 +128,7 @@ export default function TaskForm({onTaskCreated}: Props){
                                 type="submit"
                                 variant="contained"
                                 color="success"
+                                disabled={Boolean(error[0] || error[1])}
                                 startIcon={<AddCircleOutlineIcon/>}
                                 sx={{
                                     mt: 2,
