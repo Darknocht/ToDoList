@@ -64,16 +64,19 @@ export default function TaskList({reload}: Props){
             mr: 'auto'}}>
             {tasks.map((task) => (
                 <ListItem alignItems="flex-start">
+                    {/*List of all tasks */}
                     <ListItemText
                         style={{
                             backgroundColor: "white",
                             borderRadius: 10}}
                               secondary={
                                   <React.Fragment>
+                                      {/*We create a box to put the same line title and the color dot */}
                                       <Box sx={{
                                           display: 'flex',
                                           alignItems: 'flex-start',
                                       }}>
+                                          {/*Color dot */}
                                           <Box sx={{
                                               width: 20,
                                               height: 20,
@@ -85,6 +88,7 @@ export default function TaskList({reload}: Props){
                                               flexShrink: 0,
                                               bgcolor: colorTask(task.status)
                                           }}/>
+                                          {/*Title */}
                                           <Typography
                                               component="span"
                                               variant="h5"
@@ -109,6 +113,7 @@ export default function TaskList({reload}: Props){
                                       >
                                           {task.description}
                                       </Typography>
+                                      {/*Select button to choose a status */}
                                       <TextField
                                           size="small"
                                           select={true}
@@ -124,6 +129,7 @@ export default function TaskList({reload}: Props){
                                           <MenuItem value="in-progress">Laufend</MenuItem>
                                           <MenuItem value="done">Fertig</MenuItem>
                                       </TextField>
+                                      {/*Button to delete the task */}
                                       <Button
                                           onClick={() => handleDelete(task.id)}
                                           color="error"

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TextField, Button, MenuItem, Paper, Dialog, DialogTitle, DialogContent, Box, Typography} from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
@@ -21,18 +21,25 @@ export default function TaskForm({onTaskCreated}: Props){
 
     /**
      * Checking if title and description don't meet the criteria
+     * @param t {string} title of the form to test
+     * @param d {string} description of the form to test
      * @return {string[]} an Array of description errors (empty if there are no error)
      */
-    const checking = (): string[] => {
+    const checking = (t: string, d:string): string[] => {
         let errors: string[] = ["", ""];
-        if(!title || title.length > 100){
+        if(!t || t.length > 100){
             errors[0] = "Erforderlicher Titel mit max 100 Zeichen";
         }
-        if(description.length > 500 || /<script>/i.test(description)){
-            errors[1] = "Beschreibung mit max 500 Zeichen und kein JS-Code"
+        if(d.length > 500 || /<script>/i.test(d)){
+            errors[1] = "Beschreibung max 500 Zeichen und kein JS-Code"
         }
         return errors;
     }
+
+    //Update title and description if changing in form
+    useEffect(() => {
+        setError(checking(title, description));
+    }, [title, description]);
 
     /**
      * Create the task when the creating Button is clicked and close the window
@@ -40,14 +47,14 @@ export default function TaskForm({onTaskCreated}: Props){
      */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const err = checking();
         //An error has been found
-        if(err[0].length > 0 || err[1].length > 0){
-            setError(err);
+        if(error[0].length > 0 || error[1].length > 0){
             return;
         }
         //Initialisation of the task
         await createTask({title, description, status});
+
+        //Reset of the inputs
         setTitle("");
         setDescription("");
         setStatus("todo");
@@ -61,7 +68,9 @@ export default function TaskForm({onTaskCreated}: Props){
     //Representation of a TaskForm to create a new task
     return (
         <Paper sx={{p:2, mb:2, borderRadius: 2}}>
+            {/*Title and create button*/}
             <Typography variant="h3" color="black" sx={{mb: 2}}>To-Do List</Typography>
+            {/*When the create button is clicked, a pop-up shows up*/}
             <Button
                 variant="contained"
                 color="success"
@@ -70,12 +79,15 @@ export default function TaskForm({onTaskCreated}: Props){
             >
                 eine Aufgabe erstellen
             </Button>
+
+            {/*Window of the pop-up */}
             <Dialog
                 open={open}
                 onClose={() => {setOpen(false)}}
             >
                 <DialogTitle>
                     Eine Aufgabe erstellen
+                    {/*Button to close the window */}
                     <Button
                         variant="contained"
                         color="error"
@@ -86,16 +98,27 @@ export default function TaskForm({onTaskCreated}: Props){
                     </Button>
                 </DialogTitle>
                 <DialogContent>
+                    {/*Form to create a new task */}
                     <form onSubmit={handleSubmit}>
+                        {/*Input for the title */}
                         <TextField
                             fullWidth={true}
                             label="Titel"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             error={Boolean(!!error && error[0].length > 0)}
-                            helperText={error[0]}
-                            sx={{mt: 2}}
+                            helperText={error[0] || " "}
+                            sx={{mt: 2,
+                                "& .MuiFormHelperText-root": {
+                                    minHeight: "20px",
+                                    minWidth: "300px",
+                                    whiteSpace: "normal",
+                                    wordBreak: "break-word",
+                                    overflowWrap: "anywhere",
+                                    maxWidth: "100%"
+                                }}}
                         />
+                        {/*Input for description */}
                         <TextField
                             fullWidth={true}
                             label="Beschreibung"
@@ -103,10 +126,19 @@ export default function TaskForm({onTaskCreated}: Props){
                             onChange={(e) => setDescription(e.target.value)}
                             multiline={true}
                             rows={3}
-                            sx={{mt:2}}
+                            sx={{mt:2,
+                                "& .MuiFormHelperText-root": {
+                                    minHeight: "20px",
+                                    minWidth: "200px",
+                                    whiteSpace: "normal",
+                                    wordBreak: "break-word",
+                                    overflowWrap: "anywhere",
+                                    maxWidth: "100%"
+                                }}}
                             error={Boolean(!!error && error[1].length > 0)}
-                            helperText={error[1]}
+                            helperText={error[1] || " "}
                         />
+                        {/*Select button to choose a status*/}
                         <Box sx={{display: "flex", justifyContent: "space-between"}}>
                             <TextField
                                 size="small"
@@ -124,6 +156,7 @@ export default function TaskForm({onTaskCreated}: Props){
                                 <MenuItem value="in-progress">Laufend</MenuItem>
                                 <MenuItem value="done">Fertig</MenuItem>
                             </TextField>
+                            {/*Submit button to create the new task*/}
                             <Button
                                 type="submit"
                                 variant="contained"
@@ -138,11 +171,9 @@ export default function TaskForm({onTaskCreated}: Props){
                                 erstellen
                             </Button>
                         </Box>
-
                     </form>
                 </DialogContent>
             </Dialog>
-
         </Paper>
     );
 }
