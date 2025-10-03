@@ -22,7 +22,7 @@ jobs:
         run: chmod +x node_modules/.bin/jest
       - name: Install dependencies
         run: npm install
-      - name: Running Backend
+      - name: Running Tests Backend
         run: npm test
       - name: Running Render Deploy
         run: |
