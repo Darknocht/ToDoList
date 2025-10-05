@@ -1,8 +1,13 @@
-const request = require("supertest");
-const app = require("../src/server");
-
 //Mocking dompurify
 jest.mock("dompurify");
+/*jest.mock("dompurify", () => {
+    return () => ({
+        sanitize: (input) => input.replace(/<script.*?>.*?<\/script>/gi, '')
+    });
+});*/
+
+const request = require("supertest");
+const app = require("../src/server");
 
 //Data file, where the tasks are stocked
 const DATA_FILE = "test/tasks.test.json"; //   ./src/tasks.json
