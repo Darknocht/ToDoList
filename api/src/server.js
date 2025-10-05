@@ -73,11 +73,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self'");
-    next();
-});
-
 app.use(express.json());
 
 //We want just 2 files for our Programm, tasks.json for the App and tasks.test.json for tests
