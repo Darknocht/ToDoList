@@ -1,5 +1,9 @@
 //Mocking dompurify
-jest.mock("dompurify");
+jest.mock("dompurify", () => {
+    return jest.fn(() => ({
+        sanitize: (input) => input.replace(/<script.*?>.*?<\/script>/gi, "")
+    }));
+});
 
 const request = require("supertest");
 const app = require("../src/server");

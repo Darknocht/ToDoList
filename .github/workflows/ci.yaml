@@ -25,6 +25,7 @@ jobs:
       - name: Running Tests Backend
         run: npm test
       - name: Running Render Deploy
+        if: github.ref == 'refs/heads/main' && success()
         run: |
           curl "$RENDER_DEPLOY_HOOK"
         env:
