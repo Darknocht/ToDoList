@@ -4,6 +4,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import {createTask} from "../api.ts";
 import type {Task} from "../Task.ts";
+import DOMPurify from "dompurify";
 
 interface Props {
     onTaskCreated: () => void;
@@ -51,8 +52,13 @@ export default function TaskForm({onTaskCreated}: Props){
         if(error[0].length > 0 || error[1].length > 0){
             return;
         }
+
+        //Sanitization of title and description
+        const sanitizedTitle = DOMPurify.sanitize(title, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+        const sanitizedDescription = DOMPurify.sanitize(description, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
         //Initialisation of the task
-        await createTask({title, description, status});
+        await createTask({title: sanitizedTitle, description: sanitizedDescription, status});
 
         //Reset of the inputs
         setTitle("");

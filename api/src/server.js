@@ -1,5 +1,11 @@
-const express = require("express");
-const cors = require("cors");
+const express = require("express"); //Database server
+const cors = require("cors"); //CORS Security for the paths
+
+//Initiation instance for the sanitization of inputs (Title and Description)
+const { JSDOM } = require("jsdom");
+const createDOMPurify = require("dompurify");
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
 
 const app = express();
 
@@ -50,12 +56,22 @@ const rwDB = new readingWritingDatabase(
 
 //GET /tasks
 app.get('/tasks', (req, res) => {
-    res.status(200).json(rwDB.readTasks()) //Code 200 (OK)
+    //Sanitization of title and description in tasks before to send
+    const tasks = rwDB.readTasks().map(task => ({
+        ...task,
+        title: DOMPurify.sanitize(task.title, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }),
+        description: DOMPurify.sanitize(task.description, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
+    }));
+    res.status(200).json(tasks); //Code 200 (OK)
 });
 
 //POST /tasks
 app.post('/tasks', (req, res) => {
-    const {title, description="", status = "todo" } = req.body;
+    let {title, description="", status = "todo" } = req.body;
+
+    //Sanitization of title and description
+    title = DOMPurify.sanitize(title, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+    description = DOMPurify.sanitize(description, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 
     //Checking arguments
     //title must not empty and max 100 characters
