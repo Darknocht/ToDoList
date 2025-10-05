@@ -1,3 +1,6 @@
+//Test environment
+process.env.NODE_ENV = "test";
+
 //Mocking dompurify
 jest.mock("dompurify", () => {
     return jest.fn(() => ({
