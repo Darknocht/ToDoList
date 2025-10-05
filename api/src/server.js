@@ -107,7 +107,7 @@ app.post('/tasks', (req, res) => {
     description = DOMPurify.sanitize(description, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 
     //description must not contain <script>
-    if(/script/i.test(description)){
+    if(/script.*?/i.test(description)){
         //<script> can be <SCRIPT>, <ScRiPt>, etc.
         return res.status(400).json({ error: "Invalid description" });
     }
