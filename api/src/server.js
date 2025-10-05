@@ -44,26 +44,49 @@ const app = express();
 //Using a security with CORS, to allow only front-end to the port 5173
 const allowedOrigins = [
     "http://localhost:5173",
+    "http://localhost:3000",
     "https://to-do-list-rho-snowy-75.vercel.app" //Vercel server (Front-End)
 ];
 
-//Allowed for Swagger
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use(cors({
-    origin: function (origin, callback) {
-        // Autoriser toutes les requêtes sans origin (Swagger, Postman) et celles autorisées
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            console.warn("Blocked by CORS:", origin);
-            // On refuse l’accès, mais sans générer une erreur qui casse Swagger
-            callback(null, false);
+//CORS middleware for API routes
+app.use((req, res, next) => {
+    //Allow Swagger path
+    if (req.path.startsWith("/api-docs/")) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        if (req.method === "OPTIONS"){
+            return res.sendStatus(200);
         }
-    },
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-    optionsSuccessStatus: 200 // Pour gérer les requêtes OPTIONS
-}));
+        return next();
+    }
+
+    //Allow others paths from origin
+    const origin = req.headers.origin;
+    if (!origin || allowedOrigins.includes(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin || "");
+        res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        if (req.method === "OPTIONS"){
+            return res.sendStatus(200);
+        }
+        next();
+    }
+    else {
+        console.warn("Blocked by CORS:", origin);
+        res.status(403).send("Not allowed by CORS");
+    }
+});
+
+//Content Security Policy
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'");
+    next();
+});
+
+//Swagger route
+app.use("/api-docs/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'");

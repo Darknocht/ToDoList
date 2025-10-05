@@ -22,13 +22,15 @@ beforeEach(() => {
     rwDB.reset()
 });
 
-describe("CORS configuration", () => {
+describe("CORS for Origin links", () => {
     it("CORS should allow requests from localhost:5173", async () => {
         const res = await request(app)
             .get("/tasks")
             .set("Origin", "http://localhost:5173");
 
         expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
         expect(res.statusCode).toBe(200);
     });
 
@@ -38,6 +40,8 @@ describe("CORS configuration", () => {
             .set("Origin", "https://to-do-list-rho-snowy-75.vercel.app");
 
         expect(res.headers["access-control-allow-origin"]).toBe("https://to-do-list-rho-snowy-75.vercel.app");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
         expect(res.statusCode).toBe(200);
     });
 
@@ -47,8 +51,66 @@ describe("CORS configuration", () => {
             .set("Origin", "http://www.google.com"); //Google is an example but another link can work
 
         expect(res.headers["access-control-allow-origin"]).toBeUndefined();
-        expect(res.statusCode).toBe(500);
+        expect(res.statusCode).toBe(403);
         expect(res.text).toMatch(/Not allowed by CORS/);
+    });
+});
+
+describe("CORS for /api-docs", () => {
+    it("should allow GET requests and set CORS headers", async () => {
+        const res = await request(app)
+            .get("/api-docs/")
+            .set("Origin", "http://localhost:3000");
+
+        expect(res.statusCode).toBe(200);
+        expect(res.headers["access-control-allow-origin"]).toBe("*");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
+    });
+
+    it("should respond 200 to OPTIONS preflight requests", async () => {
+        const res = await request(app)
+            .options("/api-docs/")
+            .set("Origin", "http://localhost:3000");
+
+        expect(res.statusCode).toBe(200);
+        expect(res.headers["access-control-allow-origin"]).toBe("*");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
+    });
+
+    it("should call next() for other methods", async () => {
+        const res = await request(app)
+            .post("/api-docs/")
+            .set("Origin", "http://localhost:3000");
+
+        expect(res.headers["access-control-allow-origin"]).toBe("*");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
+    });
+
+    it("should respond 200 for OPTIONS preflight on /tasks", async () => {
+        const res = await request(app)
+            .options("/tasks")
+            .set("Origin", "http://localhost:5173")
+            .set("Access-Control-Request-Method", "POST")
+
+        expect(res.statusCode).toBe(200);
+        expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
+    });
+
+    it("should respond 200 for OPTIONS preflight on /api-docs/", async () => {
+        const res = await request(app)
+            .options("/api-docs/")
+            .set("Origin", "http://localhost:3000")
+            .set("Access-Control-Request-Method", "POST")
+
+        expect(res.statusCode).toBe(200);
+        expect(res.headers["access-control-allow-origin"]).toBe("*");
+        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
+        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
     });
 });
 
