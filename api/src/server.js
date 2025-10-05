@@ -2,18 +2,10 @@ const express = require("express"); //Database server
 const cors = require("cors"); //CORS Security for the paths
 
 //Initiation instance for the sanitization of inputs (Title and Description)
-let DOMPurify;
-
-/* istanbul ignore next */
-if (process.env.NODE_ENV === "test") {
-    // Mock DOMPurify for the tests
-    DOMPurify = require("dompurify")();
-} else {
-    const { JSDOM } = require("jsdom");
-    const createDOMPurify = require("dompurify");
-    const window = new JSDOM("").window;
-    DOMPurify = createDOMPurify(window);
-}
+const { JSDOM } = require("jsdom");
+const createDOMPurify = require("dompurify");
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
 
 
 const app = express();
