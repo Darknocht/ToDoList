@@ -12,6 +12,36 @@ beforeEach(() => {
     rwDB.reset()
 });
 
+describe("CORS configuration", () => {
+    it("CORS should allow requests from localhost:5173", async () => {
+        const res = await request(app)
+            .get("/tasks")
+            .set("Origin", "http://localhost:5173");
+
+        expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
+        expect(res.statusCode).toBe(200);
+    });
+
+    it("CORS should allow requests from the Vercel link", async () => {
+        const res = await request(app)
+            .get("/tasks")
+            .set("Origin", "https://to-do-list-rho-snowy-75.vercel.app");
+
+        expect(res.headers["access-control-allow-origin"]).toBe("https://to-do-list-rho-snowy-75.vercel.app");
+        expect(res.statusCode).toBe(200);
+    });
+
+    it("CORS should block requests from unauthorized origins", async () => {
+        const res = await request(app)
+            .get("/tasks")
+            .set("Origin", "http://www.google.com"); //Google is an example but another link can work
+
+        expect(res.headers["access-control-allow-origin"]).toBeUndefined();
+        expect(res.statusCode).toBe(500);
+        expect(res.text).toMatch(/Not allowed by CORS/);
+    });
+});
+
 describe("Tasks API", () => {
     it("GET should return a void array", async () => {
         const res = await request(app).get("/tasks");
@@ -65,28 +95,28 @@ describe("Tasks API", () => {
         expect(res.body.error).toMatch(/Invalid description/);
     });
 
-    it("POST should throw a error with script in description", async () => {
+    it("POST should sanitize with script in description", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "Test", description: "test test <script> test test test", status: "todo" });
-        expect(res.statusCode).toBe(400);
-        expect(res.body.error).toMatch(/Invalid description/);
+        expect(res.statusCode).toBe(201);
+        expect(res.body.description).toBe("test test ");
     });
 
-    it("POST should throw a error with SCRIPT in description", async () => {
+    it("POST should sanitize with SCRIPT in description", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "Test", description: "test test <SCRIPT> test test test", status: "todo" });
-        expect(res.statusCode).toBe(400);
-        expect(res.body.error).toMatch(/Invalid description/);
+        expect(res.statusCode).toBe(201);
+        expect(res.body.description).toBe("test test ");
     });
 
-    it("POST should throw a error with ScRiPt in description", async () => {
+    it("POST should sanitize with ScRiPt in description", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "Test", description: "test test <ScRiPt> test test test", status: "todo" });
-        expect(res.statusCode).toBe(400);
-        expect(res.body.error).toMatch(/Invalid description/);
+        expect(res.statusCode).toBe(201);
+        expect(res.body.description).toBe("test test ");
     });
 
     it("POST should throw a error with unknown status", async () => {
