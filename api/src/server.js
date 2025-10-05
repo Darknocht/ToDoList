@@ -1,6 +1,15 @@
 const express = require("express"); //Database server
 const cors = require("cors"); //CORS Security for the paths
 
+//Data file, where the tasks are stocked
+const readingWritingDatabase = require('./readingWritingDatabase');
+
+const fs = require("fs");
+const yaml = require("yaml");
+const swaggerUi = require("swagger-ui-express");
+const apiDocsFile = fs.readFileSync("./src/swagger.yaml", "utf8");
+const swaggerDocument = yaml.parse(apiDocsFile);
+
 //Initiation instance for the sanitization of inputs (Title and Description)
 let DOMPurify;
 
@@ -38,15 +47,22 @@ const allowedOrigins = [
     "https://to-do-list-rho-snowy-75.vercel.app" //Vercel server (Front-End)
 ];
 
+//Allowed for Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(cors({
     origin: function (origin, callback) {
+        // Autoriser toutes les requêtes sans origin (Swagger, Postman) et celles autorisées
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error("Not allowed by CORS"));
+            console.warn("Blocked by CORS:", origin);
+            // On refuse l’accès, mais sans générer une erreur qui casse Swagger
+            callback(null, false);
         }
     },
     methods: ["GET", "POST", "PATCH", "DELETE"],
+    optionsSuccessStatus: 200 // Pour gérer les requêtes OPTIONS
 }));
 
 app.use((req, res, next) => {
@@ -55,19 +71,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
-
-//Data file, where the tasks are stocked
-const readingWritingDatabase = require('./readingWritingDatabase');
-
-const fs = require("fs");
-const yaml = require("yaml");
-const swaggerUi = require("swagger-ui-express");
-
-const file = fs.readFileSync("./src/swagger.yaml", "utf8");
-const swaggerDocument = yaml.parse(file);
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //We want just 2 files for our Programm, tasks.json for the App and tasks.test.json for tests
 /* istanbul ignore next */
