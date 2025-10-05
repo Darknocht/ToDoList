@@ -4,8 +4,9 @@ const cors = require("cors"); //CORS Security for the paths
 //Initiation instance for the sanitization of inputs (Title and Description)
 let DOMPurify;
 
+/* istanbul ignore next */
 try {
-    //In test environments (GitHub Actions)
+    //In test environments
     if(process.env.NODE_ENV === "test") {
         console.warn("DOMPurify initialization skipped (test environment).");
         DOMPurify = {

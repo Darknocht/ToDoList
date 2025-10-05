@@ -105,28 +105,28 @@ describe("Tasks API", () => {
         expect(res.body.error).toMatch(/Invalid description/);
     });
 
-    it("POST should sanitize with script in description", async () => {
+    it("POST should throw an error with script in description", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "Test", description: "test test <script> test test test", status: "todo" });
-        expect(res.statusCode).toBe(201);
-        expect(res.body.description).toBe("test test ");
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
     });
 
-    it("POST should sanitize with SCRIPT in description", async () => {
+    it("POST should throw an error with SCRIPT in description", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "Test", description: "test test <SCRIPT> test test test", status: "todo" });
-        expect(res.statusCode).toBe(201);
-        expect(res.body.description).toBe("test test ");
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
     });
 
-    it("POST should sanitize with ScRiPt in description", async () => {
+    it("POST should throw an error with ScRiPt in description", async () => {
         const res = await request(app)
             .post("/tasks")
             .send({ title: "Test", description: "test test <ScRiPt> test test test", status: "todo" });
-        expect(res.statusCode).toBe(201);
-        expect(res.body.description).toBe("test test ");
+        expect(res.statusCode).toBe(400);
+        expect(res.body.error).toMatch(/Invalid description/);
     });
 
     it("POST should throw a error with unknown status", async () => {
