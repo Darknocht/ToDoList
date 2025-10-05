@@ -1,6 +1,9 @@
 const request = require("supertest");
 const app = require("../src/server");
 
+//Mocking dompurify
+jest.mock("dompurify");
+
 //Data file, where the tasks are stocked
 const DATA_FILE = "test/tasks.test.json"; //   ./src/tasks.json
 const readingWritingDatabase = require('../src/readingWritingDatabase');
