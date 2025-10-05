@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Running Tests Backend
-        run: npm test
+        run: npm test --runInBand
       - name: Running Render Deploy
         if: github.ref == 'refs/heads/main' && success()
         run: |
