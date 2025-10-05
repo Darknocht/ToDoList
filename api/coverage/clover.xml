@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1759664718510" clover="3.2.0">
-  <project timestamp="1759664718510" name="All files">
+<coverage generated="1759664843635" clover="3.2.0">
+  <project timestamp="1759664843635" name="All files">
     <metrics statements="70" coveredstatements="70" conditionals="24" coveredconditionals="24" methods="13" coveredmethods="13" elements="107" coveredelements="107" complexity="0" loc="70" ncloc="70" packages="1" files="2" classes="2"/>
     <file name="readingWritingDatabase.js" path="C:\Users\Alexis\WebstormProjects\ToDoList\api\src\readingWritingDatabase.js">
       <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>

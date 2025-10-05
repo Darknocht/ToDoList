@@ -22,6 +22,8 @@ jobs:
         run: chmod +x node_modules/.bin/jest
       - name: Install dependencies
         run: npm install
+      - name: Install dompurify
+        run: npm install dompurify
       - name: Running Tests Backend
         run: npm test
       - name: Running Render Deploy
