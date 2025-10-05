@@ -91,17 +91,23 @@ app.get('/tasks', (req, res) => {
 app.post('/tasks', (req, res) => {
     let {title, description="", status = "todo" } = req.body;
 
-    //Sanitization of title and description
-    title = DOMPurify.sanitize(title, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-    description = DOMPurify.sanitize(description, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-
     //Checking arguments
     //title must not empty and max 100 characters
     if(title.length <= 0 || title.length > 100){
         return res.status(400).json({ error: "Invalid title" });
     }
-    //description must max 500 characters and not contain <script>
-    if(description.length > 500 || /script/i.test(description)){
+    //description must max 500 characters
+    if(description.length > 500){
+        //<script> can be <SCRIPT>, <ScRiPt>, etc.
+        return res.status(400).json({ error: "Invalid description" });
+    }
+
+    //Sanitization of title and description
+    title = DOMPurify.sanitize(title, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+    description = DOMPurify.sanitize(description, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
+    //description must not contain <script>
+    if(/script/i.test(description)){
         //<script> can be <SCRIPT>, <ScRiPt>, etc.
         return res.status(400).json({ error: "Invalid description" });
     }
