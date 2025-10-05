@@ -45,8 +45,11 @@ const allowedOrigins = [
     "http://localhost:5173", //Front-End local server
     "http://localhost:3000", //Back-End local server
     "https://to-do-list-rho-snowy-75.vercel.app", //Vercel server (Front-End)
-    "https://todolist-181m.onrender.com/" //Render server (Back-End)
+    "https://todolist-181m.onrender.com" //Render server (Back-End)
 ];
+
+//Swagger route
+app.use("/api-docs/", cors(), swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 //CORS middleware for API routes
@@ -58,7 +61,8 @@ app.use((req, res, next) => {
             methods: ["GET","POST","PATCH","DELETE","OPTIONS"],
             allowedHeaders: ["Content-Type"]
         })(req, res, next);
-    } else {
+    }
+    else {
         res.status(403).send("Not allowed by CORS");
     }
 });
@@ -68,9 +72,6 @@ app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'");
     next();
 });
-
-//Swagger route
-app.use("/api-docs/", cors(), swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'");
