@@ -4,16 +4,15 @@ const cors = require("cors"); //CORS Security for the paths
 //Initiation instance for the sanitization of inputs (Title and Description)
 let DOMPurify;
 
-try {
+/* istanbul ignore next */
+if (process.env.NODE_ENV === "test") {
+    // Mock DOMPurify for the tests
+    DOMPurify = require("dompurify")();
+} else {
     const { JSDOM } = require("jsdom");
     const createDOMPurify = require("dompurify");
     const window = new JSDOM("").window;
     DOMPurify = createDOMPurify(window);
-} catch (e) {
-    console.warn("DOMPurify initialization skipped (test environment).");
-    DOMPurify = {
-        sanitize: (x) => x, // no-op fallback during tests
-    };
 }
 
 
