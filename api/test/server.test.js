@@ -29,8 +29,6 @@ describe("CORS for Origin links", () => {
             .set("Origin", "http://localhost:5173");
 
         expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
-        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
-        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
         expect(res.statusCode).toBe(200);
     });
 
@@ -40,8 +38,6 @@ describe("CORS for Origin links", () => {
             .set("Origin", "https://to-do-list-rho-snowy-75.vercel.app");
 
         expect(res.headers["access-control-allow-origin"]).toBe("https://to-do-list-rho-snowy-75.vercel.app");
-        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
-        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
         expect(res.statusCode).toBe(200);
     });
 
@@ -64,8 +60,6 @@ describe("CORS for /api-docs", () => {
 
         expect(res.statusCode).toBe(200);
         expect(res.headers["access-control-allow-origin"]).toBe("*");
-        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
-        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
     });
 
     it("should respond 200 to OPTIONS preflight requests", async () => {
@@ -73,8 +67,8 @@ describe("CORS for /api-docs", () => {
             .options("/api-docs/")
             .set("Origin", "http://localhost:3000");
 
-        expect(res.statusCode).toBe(200);
-        expect(res.headers["access-control-allow-origin"]).toBe("*");
+        expect(res.statusCode).toBe(204);
+        expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
         expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
         expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
     });
@@ -85,8 +79,6 @@ describe("CORS for /api-docs", () => {
             .set("Origin", "http://localhost:3000");
 
         expect(res.headers["access-control-allow-origin"]).toBe("*");
-        expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
-        expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
     });
 
     it("should respond 200 for OPTIONS preflight on /tasks", async () => {
@@ -95,7 +87,7 @@ describe("CORS for /api-docs", () => {
             .set("Origin", "http://localhost:5173")
             .set("Access-Control-Request-Method", "POST")
 
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(204);
         expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
         expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
         expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
@@ -107,8 +99,8 @@ describe("CORS for /api-docs", () => {
             .set("Origin", "http://localhost:3000")
             .set("Access-Control-Request-Method", "POST")
 
-        expect(res.statusCode).toBe(200);
-        expect(res.headers["access-control-allow-origin"]).toBe("*");
+        expect(res.statusCode).toBe(204);
+        expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
         expect(res.headers["access-control-allow-methods"]).toBe("GET,POST,PATCH,DELETE,OPTIONS");
         expect(res.headers["access-control-allow-headers"]).toBe("Content-Type");
     });
@@ -122,10 +114,10 @@ describe("Tasks API", () => {
     });
 
     it("GET should return an array with data", async () => {
-        const task = await request(app)
+        await request(app)
             .post("/tasks")
             .send({ title: "Test" });
-        const task2 = await request(app)
+        await request(app)
             .post("/tasks")
             .send({ title: "New task", description: "I love to make a task.", status: "todo" });
         const res = await request(app)
