@@ -44,7 +44,8 @@ const app = express();
 const allowedOrigins = [
     "http://localhost:5173", //Front-End local server
     "http://localhost:3000", //Back-End local server
-    "https://to-do-list-rho-snowy-75.vercel.app" //Vercel server (Front-End)
+    "https://to-do-list-rho-snowy-75.vercel.app", //Vercel server (Front-End)
+    "https://todolist-181m.onrender.com/" //Render server (Back-End)
 ];
 
 
