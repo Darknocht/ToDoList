@@ -5,6 +5,7 @@ import type {Task} from "../Task.ts";
 import {getTasks, deleteTask, updateTaskStatus} from "../api.ts";
 import React from "react";
 
+//Interface Props for the main function
 interface Props {
     reload: boolean;
 }

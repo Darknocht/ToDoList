@@ -6,6 +6,7 @@ import {createTask} from "../api.ts";
 import type {Task} from "../Task.ts";
 import DOMPurify from "dompurify";
 
+//Interface Props for the main function
 interface Props {
     onTaskCreated: () => void;
 }

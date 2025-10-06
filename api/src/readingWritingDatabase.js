@@ -24,6 +24,7 @@ class readingWritingDatabase {
     /**
      * Write a new task in the file DATA_FILE
      * @param {Object} tasks with his different components (title, description, status)
+     * @returns {any|*[]}
      */
     writeTasks(tasks) {
         fs.writeFileSync(this.#DATA_FILE, JSON.stringify(tasks, null, 2));

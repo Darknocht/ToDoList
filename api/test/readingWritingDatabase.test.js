@@ -1,5 +1,4 @@
 const readingWritingDatabase = require('../src/readingWritingDatabase');
-const test = require("node:test");
 
 describe("readingWritingDatabase()", () => {
     it('rwDB should reset', () => {
